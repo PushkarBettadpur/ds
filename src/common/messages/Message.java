@@ -28,7 +28,6 @@ public class Message implements KVMessage {
 
     public String toString() {
         String str = status + "," + key + "," + value;
-        System.out.println(str);
         return str;
     }
 }
