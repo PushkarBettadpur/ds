@@ -17,7 +17,7 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 	private String address;
 	private int port;
 	private Client client;
-	private static final String PROMPT = "EchoClient> ";
+	private static final String PROMPT = "Client> ";
 
 	private String key;
 	private String value;
@@ -92,38 +92,22 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 		return this.client;
 	}
 
-	// Protocol
-	// GET,Key,Value
-	// PUT,Key,Value
-	// ERROR
-
 	@Override
 	public void handleNewMessage(TextMessage msg) {
 		//if(client.IsRunning()) {
 
 			String[] tokens = msg.getMsg().split(",");
 
-			//System.out.println("Received: " + msg.getMsg());
-
 			if (tokens.length == 3) {
 				System.out.println(tokens[0] + "<" + tokens[1] + "," + tokens[2] + ">");
 			}
-
-			/*
-			if(tokens[0].equals("GET") && tokens.length == 3) {
-				System.out.println("GET_SUCCESS<" + tokens[1] + "," + tokens[2] + ">");
-			}
-			else if(tokens[0].equals("PUT") && tokens.length == 3) {
-				System.out.println("PUT_SUCCESS<" + tokens[1] + "," + tokens[2] + ">");
-			}
-			else if(tokens[0].equals("ERROR")) {
-				printError(tokens[1]);
-			}
-			*/
 			else {
 				System.out.println(msg.getMsg());
 			}
 
+			if (msg.getMsg().trim().equals("Server aborted")) {
+				disconnect();
+			}
 			System.out.print(PROMPT);
 	//	}
 	}
