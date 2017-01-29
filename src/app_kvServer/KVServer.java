@@ -4,7 +4,7 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.IOException;
-
+import java.io.File;
 import logger.LogSetup;
 
 import org.apache.log4j.Level;
@@ -88,6 +88,28 @@ public class KVServer extends Thread {
 
     private boolean initializeServer() {
     	logger.info("Initialize server ...");
+    	logger.info("Setting up files directory ...");
+        File filesdir = new File("./files/");
+        boolean result = false;
+        if (!filesdir.exists()) {
+            logger.info("Creating the files/ subdirectory ...");
+        }
+        try {
+            filesdir.mkdir();
+            result = true;  
+            for (File f : filesdir.listFiles()) {
+                if (f.getName().endsWith(".lock"))
+                    f.delete();
+            }
+            logger.info("Removed any old locks ...");
+        }
+        catch (SecurityException se) {
+            logger.info("Failed to set up files/ subdirectory ...");
+        }
+        if (result) {
+            logger.info("Finished Setting up files/ subdirectory ...");
+        }
+
     	try {
             serverSocket = new ServerSocket(port);
             logger.info("Server listening on port: "

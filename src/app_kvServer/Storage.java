@@ -15,6 +15,9 @@ import common.messages.Message;
 // Need to fix importing java.io.*
 import java.io.*;
 import java.io.FileWriter;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 
 import java.util.LinkedHashMap;
 import java.util.Set;
@@ -193,9 +196,16 @@ public class Storage {
         }
 	    else
 	    {
+            // if elem's already in cache, upgrade frequency by 1
+            if (findInCache(key))
+            {
+                lfu_kf.put(key, lfu_kf.get(key) + 1);
+                lfu_kv.put(key, value);
+                return;
+            }
             // If the cache is beyond it's capacity, then
             // We need to evict one.
-		    if (lfu_kv.size() >= this.cacheSize)
+		    else if (lfu_kv.size() >= this.cacheSize)
 		    {
                 // Find the smallest value in the Hashmap storing
                 // the key-frequency pair. So smallest freq gets evicted
@@ -208,10 +218,18 @@ public class Storage {
                 String toRemove = small.getKey();
                 lfu_kf.remove(toRemove);
                 lfu_kv.remove(toRemove);
+                // Add new key and set its value to 1
+                lfu_kf.put(key, 1);
+                lfu_kv.put(key, value);
+                return;
 		    }
-            // Add new key and set its value to 1
-            lfu_kf.put(key, 1);
-            lfu_kv.put(key, value);
+            // if there's no need to evict anything, add a new
+            // element and set it's frequency to 1
+            else
+            {
+                lfu_kf.put(key, 1);
+                lfu_kv.put(key, value);
+            }
             return;
 	    }
     }
@@ -221,9 +239,13 @@ public class Storage {
     // The strategy is to update the file AND the cache immediately.
     public Message putHelper(String key, String value) throws Exception
     {
-	    String filename = ""+key;
-        File varTmpDir = new File(filename);
+	    String filename = "./files/"+key;
 
+        String lockFileName = filename+".lock";
+        File lockFile = new File(lockFileName);
+        while (!lockFile.createNewFile());
+        Thread.sleep(20000);
+        File varTmpDir = new File(filename);
         // Check if the file exists
 	    boolean exists = varTmpDir.exists();
 
@@ -231,11 +253,16 @@ public class Storage {
         if (value.equals("null"))
         {
             if (!exists)
+            {
+                lockFile.delete();//lock.release();
                 return new Message(key, value, Message.StatusType.PUT_ERROR);
+            }
             else
             {
                 removeFromCache(key);
                 boolean rem = varTmpDir.delete();
+                
+                lockFile.delete();//lock.release();
                 if (!rem)
                     return new Message(key, value, Message.StatusType.PUT_ERROR);
                 else
@@ -256,6 +283,8 @@ public class Storage {
 	        fw.close();
             // Insert into cache
 	        insertIntoCache(key, value);
+
+            lockFile.delete();//lock.release();
 	        if (exists)
 		        return new Message(key, value, Message.StatusType.PUT_UPDATE);
 	        else
@@ -263,6 +292,8 @@ public class Storage {
         }
         catch (IOException e)
         {
+
+            lockFile.delete();//lock.release();
 		    System.out.println("Exception generated while opening/creating the file");
 		    return new Message(key, value, Message.StatusType.PUT_ERROR);
         }
@@ -273,16 +304,22 @@ public class Storage {
     // the value. This is done for fast I/O?
     public Message getHelper(String key) throws Exception
     {
+	    String filename = "./files/"+key;
+
+        String lockFileName = filename+".lock";
+        File lockFile = new File(lockFileName);
+        while (!lockFile.createNewFile());
         // Check to see if the key can be served by the cache
 	    boolean inCache = findInCache(key);
 	    if (inCache)
 	    {
 		    String val = getValFromCache(key);
 		    System.out.println("Cache val is "+val);
+
+            lockFile.delete();//lock.release();
 		    return new Message(key, val, Message.StatusType.GET_SUCCESS);
 	    }
 
-	    String filename = ""+key;
         File varTmpDir = new File(filename);
 
 	    // Check if file exists
@@ -293,6 +330,8 @@ public class Storage {
 	    String value = null;
 
 	    if (!exists) {
+
+            lockFile.delete();//lock.release();
 		    System.out.println("File doesn't exist "+filename);
 		    return new Message(key, "null", Message.StatusType.GET_ERROR);
 	    }
@@ -311,7 +350,10 @@ public class Storage {
 	    }
 
 	    catch (IOException e) {
+
+            lockFile.delete();//lock.release();
 		    System.out.println("Exception thrown during DiskIO");
+            return new Message(key, "null", Message.StatusType.GET_ERROR);
 	    }
 
 	    finally {
@@ -323,9 +365,15 @@ public class Storage {
 				    fr.close();
 		    }
 		    catch (IOException e) {
+    
+                lockFile.delete();//lock.release();
 			    System.out.println("Exception while closing file");
+                return new Message(key, "null", Message.StatusType.GET_ERROR);
 		    }
+
 		    insertIntoCache(key, value);
+            System.out.println("about to delete");
+            lockFile.delete();//lock.release();
 		    return new Message(key, value, Message.StatusType.GET_SUCCESS);
 	    }
     }
