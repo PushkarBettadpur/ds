@@ -244,7 +244,6 @@ public class Storage {
         String lockFileName = filename+".lock";
         File lockFile = new File(lockFileName);
         while (!lockFile.createNewFile());
-        Thread.sleep(20000);
         File varTmpDir = new File(filename);
         // Check if the file exists
 	    boolean exists = varTmpDir.exists();
