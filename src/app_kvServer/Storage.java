@@ -228,7 +228,7 @@ public class Storage {
 	    boolean exists = varTmpDir.exists();
 
         // value = null => deletion
-        if (value == null)
+        if (value.equals("null"))
         {
             if (!exists)
                 return new Message(key, value, Message.StatusType.PUT_ERROR);
