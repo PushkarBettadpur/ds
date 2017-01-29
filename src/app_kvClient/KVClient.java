@@ -98,16 +98,63 @@ public class KVClient {
 			if(kvClient != null && kvClient.getClient().isRunning()){
 				try {
 					if(tokens.length == 3) {
-						String key = tokens[1];
-						String value = tokens[2];
-						kvClient.put(key, value);
+
+						String	key = tokens[1];
+						String	value = tokens[2];
+
+						if(key.length() > 20)
+						{
+							printError("Max Length of Key is 20 bytes");		
+						}
+						else if(value.length()>(120*1024))
+						{
+							printError("Max Length of Value is 120KBytes");
+						}
+						else
+						{
+							kvClient.put(key, value);
+						}
+						
 
 						//logger.info("Requested \t" + "(" key + "," + value + ")");
 					}
-					else if(tokens.length == 2) {
+					else if(tokens.length > 3)
+					{
 						String key = tokens[1];
-						String value = "null";
-						kvClient.put(key,value);
+						String [] value = cmdLine.split(" ",3);
+
+						System.out.println(value[2] + tokens.length);
+						
+						if(key.length() > 20)
+						{
+							printError("Max Length of Key is 20 bytes");		
+						}
+						else if(value[2].length()>(120*1024))
+						{
+							printError("Max Length of Value is 120KBytes");
+						}
+						else
+						{
+							kvClient.put(key,value[2]);
+						}
+
+
+					}
+					else if(tokens.length == 2) {
+
+					
+						String	key = tokens[1];
+						String	value = "null";
+
+						if(key.length() > 20)
+						{
+							printError("Max Length of Key is 20 bytes");		
+						}
+						else
+						{
+							kvClient.put(key,value);
+						}
+
 
 						//logger.info("Requested \t<"
 						//+ "(" key + "," + null+ ")");
