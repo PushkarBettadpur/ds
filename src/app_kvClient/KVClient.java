@@ -21,7 +21,7 @@ import common.messages.Message;
 public class KVClient {
 
 	private static Logger logger = Logger.getRootLogger();
-	private static final String PROMPT = "EchoClient> ";
+	private static final String PROMPT = "Client> ";
 	private BufferedReader stdin;
 	private boolean stop = false;
 	KVStore kvClient = null;
@@ -76,7 +76,8 @@ public class KVClient {
 
 		} else  if (tokens[0].equals("send")) {
 			if(tokens.length == 2) {
-				if(kvClient != null && kvClient.getClient().isRunning()){
+				if(kvClient != null && kvClient.getClient() != null
+					&& kvClient.getClient().isRunning()) {
 
 					StringBuilder msg = new StringBuilder();
 					for(int i = 1; i < tokens.length; i++) {
@@ -95,7 +96,8 @@ public class KVClient {
 
 		}
 		else if(tokens[0].equals("put")) {
-			if(kvClient != null && kvClient.getClient().isRunning()){
+			if(kvClient != null && kvClient.getClient() != null
+				&& kvClient.getClient().isRunning()) {
 				try {
 					if(tokens.length == 3) {
 
@@ -104,7 +106,7 @@ public class KVClient {
 
 						if(key.length() > 20)
 						{
-							printError("Max Length of Key is 20 bytes");		
+							printError("Max Length of Key is 20 bytes");
 						}
 						else if(value.length()>(120*1024))
 						{
@@ -114,7 +116,7 @@ public class KVClient {
 						{
 							kvClient.put(key, value);
 						}
-						
+
 
 						//logger.info("Requested \t" + "(" key + "," + value + ")");
 					}
@@ -124,10 +126,10 @@ public class KVClient {
 						String [] value = cmdLine.split(" ",3);
 
 						System.out.println(value[2] + tokens.length);
-						
+
 						if(key.length() > 20)
 						{
-							printError("Max Length of Key is 20 bytes");		
+							printError("Max Length of Key is 20 bytes");
 						}
 						else if(value[2].length()>(120*1024))
 						{
@@ -142,13 +144,13 @@ public class KVClient {
 					}
 					else if(tokens.length == 2) {
 
-					
+
 						String	key = tokens[1];
 						String	value = "null";
 
 						if(key.length() > 20)
 						{
-							printError("Max Length of Key is 20 bytes");		
+							printError("Max Length of Key is 20 bytes");
 						}
 						else
 						{
@@ -166,6 +168,10 @@ public class KVClient {
 					printError("Unknown Error");
 					logger.info("Unknown error", e);
 				}
+			}
+			else
+			{
+				printError("Please connect to a server!");
 			}
 		}
 		else if(tokens[0].equals("get"))
@@ -187,6 +193,10 @@ public class KVClient {
 					printError("Unknown Error");
 					logger.info("Unknown error", e);
 				}
+			}
+			else
+			{
+				printError("Please connect to a server!");
 			}
 		}
 		else if(tokens[0].equals("disconnect")) {
