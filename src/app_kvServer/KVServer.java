@@ -39,6 +39,7 @@ public class KVServer extends Thread {
 		this.cacheStrategy = cacheStrategy;
 
 		this.store = new Storage(cacheSize, cacheStrategy);
+        this.start();
     }
 
     /**
@@ -140,7 +141,7 @@ public class KVServer extends Thread {
                 int cacheSize = Integer.parseInt(args[1]);
                 String replacement = args[2];
                 if (replacement.equals("LRU") || replacement.equals("FIFO") || replacement.equals("LFU"))
-    				new KVServer(port, cacheSize, replacement).start();
+    				new KVServer(port, cacheSize, replacement);
                 else {
                     System.out.println("Error! Cache Replacement must be LRU, LFU or FIFO");
                     System.exit(1);
