@@ -17,7 +17,9 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 	private String address;
 	private int port;
 	private Client client;
-	private static final String PROMPT = "EchoClient> ";
+	private static final String PROMPT = "Client> ";
+
+	boolean requestCompleted = false;
 
 	private String key;
 	private String value;
@@ -37,8 +39,17 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 	public void connect() throws UnknownHostException, IOException {
 		// TODO Auto-generated method stub
 		client = new Client(address, port);
-		client.addListener(this);
+		//client.addListener(this);
+
 		client.start();
+
+		try {
+			Thread.sleep(3000);
+			TextMessage serverReply = client.receiveMessage();
+			handleNewMessage(serverReply);
+		} catch (Exception e) {
+			System.out.println("Exception in connect()");
+		}
 	}
 
 	@Override
@@ -53,9 +64,18 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 	@Override
 	public KVMessage put(String key, String value) throws Exception {
 
+
+		//System.out.println(key);
+		//System.out.println(value);
+
 		Message newRequest = new Message(key, value, KVMessage.StatusType.PUT);
 		sendMessage(newRequest.toString());
-		return newRequest;
+
+		//Thread.sleep(10000);
+		TextMessage serverReply = this.receiveMessage();
+		handleNewMessage(serverReply);
+
+		return new Message(this.key, this.value, this.status);
 	}
 
 	@Override
@@ -63,7 +83,12 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 
 		Message newRequest = new Message(key, "null", KVMessage.StatusType.GET);
 		sendMessage(newRequest.toString());
-		return newRequest;
+
+		TextMessage serverReply = client.receiveMessage();
+		handleNewMessage(serverReply);
+
+		return new Message(this.key, this.value, this.status);
+
 	}
 
 	private void printError(String error){
@@ -79,23 +104,19 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 		}
 	}
 
-	private void receiveMessage() {
+	private TextMessage receiveMessage() {
 		try {
-			client.receiveMessage();
+			return client.receiveMessage();
 		} catch (IOException e) {
 			printError("Unable to receive message!");
 			disconnect();
 		}
+		return null;
 	}
 
 	public Client getClient() {
 		return this.client;
 	}
-
-	// Protocol
-	// GET,Key,Value
-	// PUT,Key,Value
-	// ERROR
 
 	@Override
 	public void handleNewMessage(TextMessage msg) {
@@ -103,29 +124,19 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 
 			String[] tokens = msg.getMsg().split(",");
 
-			//System.out.println("Received: " + msg.getMsg());
-
 			if (tokens.length == 3) {
 				System.out.println(tokens[0] + "<" + tokens[1] + "," + tokens[2] + ">");
+				this.key = tokens[1];
+				this.value = tokens[2];
+				this.status = KVMessage.StatusType.valueOf(tokens[0]);
 			}
-
-			/*
-			if(tokens[0].equals("GET") && tokens.length == 3) {
-				System.out.println("GET_SUCCESS<" + tokens[1] + "," + tokens[2] + ">");
-			}
-			else if(tokens[0].equals("PUT") && tokens.length == 3) {
-				System.out.println("PUT_SUCCESS<" + tokens[1] + "," + tokens[2] + ">");
-			}
-			else if(tokens[0].equals("ERROR")) {
-				printError(tokens[1]);
-			}
-			*/
 			else {
 				System.out.println(msg.getMsg());
 			}
 
-			System.out.print(PROMPT);
-	//	}
+			if (msg.getMsg().trim().equals("Server aborted")) {
+				disconnect();
+			}
 	}
 
 	@Override

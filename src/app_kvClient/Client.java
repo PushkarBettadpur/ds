@@ -44,13 +44,20 @@ public class Client extends Thread {
 			output = clientSocket.getOutputStream();
 			input = clientSocket.getInputStream();
 
+
 			while(isRunning()) {
 				try {
-					TextMessage latestMsg = receiveMessage();
+					//System.out.println("Client waiting for new message");
+
+					//TextMessage latestMsg = receiveMessage();
+
+					//System.out.println("Client received message");
+
 					for(ClientSocketListener listener : listeners) {
-						listener.handleNewMessage(latestMsg);
+						;//listener.handleNewMessage(latestMsg);
 					}
-				} catch (IOException ioe) {
+					//System.out.println("Client finished handling new message");
+				} catch (Exception ioe) {
 					if(isRunning()) {
 						logger.error("Connection lost!");
 						try {
@@ -65,6 +72,7 @@ public class Client extends Thread {
 					}
 				}
 			}
+
 		} catch (IOException ioe) {
 			logger.error("Connection could not be established!");
 
@@ -73,6 +81,7 @@ public class Client extends Thread {
 				closeConnection();
 			}
 		}
+
 	}
 
 	public synchronized void closeConnection() {
@@ -122,10 +131,13 @@ public class Client extends Thread {
 		output.write(msgBytes, 0, msgBytes.length);
 		output.flush();
 		logger.info("Send message:\t '" + msg.getMsg() + "'");
+		//System.out.println("Sent message");
     }
 
 
 	public TextMessage receiveMessage() throws IOException {
+
+		//System.out.println("Entered receiveMessage");
 
 		int index = 0;
 		byte[] msgBytes = null, tmp = null;
@@ -167,6 +179,8 @@ public class Client extends Thread {
 			/* read next char from stream */
 			read = (byte) input.read();
 		}
+
+		//System.out.println("Finished reading");
 
 		if(msgBytes == null){
 			tmp = new byte[index];
