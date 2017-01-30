@@ -18,7 +18,6 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 	private int port;
 	private Client client;
 	private static final String PROMPT = "Client> ";
-
 	boolean requestCompleted = false;
 
 	private String key;
@@ -137,6 +136,8 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 			if (msg.getMsg().trim().equals("Server aborted")) {
 				disconnect();
 			}
+			System.out.print(PROMPT);
+	//	}
 	}
 
 	@Override

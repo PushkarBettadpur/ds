@@ -62,6 +62,22 @@ public class ClientConnection implements Runnable {
 
 					TextMessage response = new TextMessage(store.handleMessage(latestMsg.getMsg().trim()));
 
+					Runtime.getRuntime().addShutdownHook(new Thread() {
+				      public void run() {
+						//System.out.println("Running Shutdown Hook");
+						//System.out.println("Informing the client");
+						try {
+							TextMessage response = new TextMessage("Server aborted");
+							sendMessage(response);
+						}
+						catch (IOException ioe) {
+							logger.error("Error! Connection lost!");
+							isOpen = false;
+						}
+				      }
+				    });
+
+
 					sendMessage(response);
 
 				/* connection either terminated by the client or lost due to

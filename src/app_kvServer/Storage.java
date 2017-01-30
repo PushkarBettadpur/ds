@@ -254,18 +254,18 @@ public class Storage {
             if (!exists)
             {
                 lockFile.delete();//lock.release();
-                return new Message(key, value, Message.StatusType.PUT_ERROR);
+                return new Message(key, value, Message.StatusType.DELETE_ERROR);
             }
             else
             {
                 removeFromCache(key);
                 boolean rem = varTmpDir.delete();
-                
+
                 lockFile.delete();//lock.release();
                 if (!rem)
-                    return new Message(key, value, Message.StatusType.PUT_ERROR);
+                    return new Message(key, value, Message.StatusType.DELETE_ERROR);
                 else
-                    return new Message(key, value, Message.StatusType.PUT_SUCCESS);
+                    return new Message(key, value, Message.StatusType.DELETE_SUCCESS);
             }
         }
 
@@ -364,7 +364,7 @@ public class Storage {
 				    fr.close();
 		    }
 		    catch (IOException e) {
-    
+
                 lockFile.delete();//lock.release();
 			    System.out.println("Exception while closing file");
                 return new Message(key, "null", Message.StatusType.GET_ERROR);
