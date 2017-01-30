@@ -132,12 +132,19 @@ public class KVServer extends Thread {
     public static void main(String[] args) {
     	try {
 			new LogSetup("logs/server.log", Level.ALL);
-			if(args.length != 1) {
+			if(args.length != 3) {
 				System.out.println("Error! Invalid number of arguments!");
-				System.out.println("Usage: Server <port>!");
+				System.out.println("Usage: <Server Port> <CacheSize> <Replacement Policy>!");
 			} else {
 				int port = Integer.parseInt(args[0]);
-				new KVServer(port, 12, "LRU").start();
+                int cacheSize = Integer.parseInt(args[1]);
+                String replacement = args[2];
+                if (replacement.equals("LRU") || replacement.equals("FIFO") || replacement.equals("LFU"))
+    				new KVServer(port, cacheSize, replacement).start();
+                else {
+                    System.out.println("Error! Cache Replacement must be LRU, LFU or FIFO");
+                    System.exit(1);
+                }
 			}
 		} catch (IOException e) {
 			System.out.println("Error! Unable to initialize logger!");

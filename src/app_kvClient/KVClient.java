@@ -125,7 +125,7 @@ public class KVClient {
 						String key = tokens[1];
 						String [] value = cmdLine.split(" ",3);
 
-						System.out.println(value[2] + tokens.length);
+						//System.out.println(value[2] + tokens.length);
 
 						if(key.length() > 20)
 						{
