@@ -294,7 +294,7 @@ public class KVClient {
      */
     public static void main(String[] args) {
     	try {
-			new LogSetup("logs/client.log", Level.ALL);
+			new LogSetup("logs/client.log", Level.OFF);
 
 			KVClient app = new KVClient();
 			app.run();

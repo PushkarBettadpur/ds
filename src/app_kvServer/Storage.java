@@ -81,8 +81,8 @@ public class Storage {
 	}
 
     public String handleMessage(String latestMsg) {
-        System.out.println("Received: " + latestMsg);
-        String[] tokens = latestMsg.split(",");
+
+        String[] tokens = latestMsg.split(" ", 3);
         if(tokens[0].equals((Message.StatusType.GET).toString()) && tokens.length == 3) {
 
             System.out.println("GET_REQUEST<" + tokens[1] + ">");
@@ -376,52 +376,4 @@ public class Storage {
 		    return new Message(key, value, Message.StatusType.GET_SUCCESS);
 	    }
     }
-
-    /*
-
-    public static void main(String[] args) {
-    	try {
-			if(args.length != 1) {
-				System.out.println("Error! Invalid number of arguments!");
-				System.out.println("Usage: Server <port>!");
-			} else {
-				int port = Integer.parseInt(args[0]);
-				KVServer serv = new KVServer(port, 5, "LRU");
-				try {
-                    // Random tests. Not very comprehensive
-				    serv.putHelper("key1", "1");
-				    serv.printCache();
-				    serv.putHelper("key2", "2");
-				    serv.printCache();
-				    serv.putHelper("key3", "3");
-				    serv.printCache();
-				    serv.putHelper("key4", "4");
-				    serv.printCache();
-				    serv.putHelper("key5", "5");
-				    serv.printCache();
-				    serv.getHelper("key1");
-				    serv.getHelper("key5");
-                    serv.getHelper("key2");
-                    serv.getHelper("key4");
-				    serv.putHelper("key6", "6");
-				    serv.putHelper("key3", "3");
- 				    serv.printCache();
-				}
-				catch (Exception e) { }
-			}
-		}
-
-/*        catch (IOException e) {
-			System.out.println("Error! Unable to initialize logger!");
-			e.printStackTrace();
-			System.exit(1);
-		}
-*//*
-        catch (NumberFormatException nfe) {
-			System.out.println("Error! Invalid argument <port>! Not a number!");
-			System.out.println("Usage: Server <port>!");
-			System.exit(1);
-		}
-    }
-    */
 }

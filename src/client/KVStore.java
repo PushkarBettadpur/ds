@@ -36,24 +36,21 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 
 	@Override
 	public void connect() throws UnknownHostException, IOException {
-		// TODO Auto-generated method stub
 		client = new Client(address, port);
-		//client.addListener(this);
-
+		client.addListener(this);
 		client.start();
 
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(500);
 			TextMessage serverReply = client.receiveMessage();
 			handleNewMessage(serverReply);
 		} catch (Exception e) {
-			System.out.println("Exception in connect()");
+			System.out.println("Exception while connecting to the server.");
 		}
 	}
 
 	@Override
 	public void disconnect() {
-		// TODO Auto-generated method stub
 		if(client != null) {
 			client.closeConnection();
 			client = null;
@@ -63,14 +60,9 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 	@Override
 	public KVMessage put(String key, String value) throws Exception {
 
-
-		//System.out.println(key);
-		//System.out.println(value);
-
 		Message newRequest = new Message(key, value, KVMessage.StatusType.PUT);
 		sendMessage(newRequest.toString());
 
-		//Thread.sleep(10000);
 		TextMessage serverReply = this.receiveMessage();
 		handleNewMessage(serverReply);
 
@@ -83,7 +75,7 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 		Message newRequest = new Message(key, "null", KVMessage.StatusType.GET);
 		sendMessage(newRequest.toString());
 
-		TextMessage serverReply = client.receiveMessage();
+		TextMessage serverReply = this.receiveMessage();
 		handleNewMessage(serverReply);
 
 		return new Message(this.key, this.value, this.status);
@@ -119,25 +111,25 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 
 	@Override
 	public void handleNewMessage(TextMessage msg) {
-		//if(client.IsRunning()) {
 
-			String[] tokens = msg.getMsg().split(",");
+		String[] tokens = msg.getMsg().split(" ", 3);
 
-			if (tokens.length == 3) {
-				System.out.println(tokens[0] + "<" + tokens[1] + "," + tokens[2] + ">");
+			try {
+				this.status = KVMessage.StatusType.valueOf(tokens[0]);
 				this.key = tokens[1];
 				this.value = tokens[2];
-				this.status = KVMessage.StatusType.valueOf(tokens[0]);
-			}
-			else {
+				System.out.print(tokens[0] + "<[" + tokens[1]+"]");
+				if (!tokens[2].equals("null")) {
+					System.out.print(": " + tokens[2]);
+				}
+				System.out.println(">");
+			} catch (Exception e) {
 				System.out.println(msg.getMsg());
 			}
 
 			if (msg.getMsg().trim().equals("Server aborted")) {
 				disconnect();
 			}
-			System.out.print(PROMPT);
-	//	}
 	}
 
 	@Override
@@ -154,7 +146,5 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 					+ address + " / " + port);
 			System.out.print(PROMPT);
 		}
-
 	}
-
 }

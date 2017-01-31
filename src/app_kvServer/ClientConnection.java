@@ -184,7 +184,6 @@ public class ClientConnection implements Runnable {
 
 		/* build final String */
 		TextMessage msg = new TextMessage(msgBytes);
-		System.out.println("ClientConnection received: " + msg.getMsg());
 		logger.info("RECEIVE \t<"
 				+ clientSocket.getInetAddress().getHostAddress() + ":"
 				+ clientSocket.getPort() + ">: '"

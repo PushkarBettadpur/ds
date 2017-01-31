@@ -131,13 +131,10 @@ public class Client extends Thread {
 		output.write(msgBytes, 0, msgBytes.length);
 		output.flush();
 		logger.info("Send message:\t '" + msg.getMsg() + "'");
-		//System.out.println("Sent message");
     }
 
 
 	public TextMessage receiveMessage() throws IOException {
-
-		//System.out.println("Entered receiveMessage");
 
 		int index = 0;
 		byte[] msgBytes = null, tmp = null;
