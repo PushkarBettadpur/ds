@@ -8,7 +8,7 @@ import common.messages.KVMessage;
 import common.messages.KVMessage.StatusType;
 
 public class AdditionalTest extends TestCase {
-	
+
 	// TODO add your test cases, at least 3
 	private KVStore kvClient;
 	private KVStore kvClient2;
@@ -27,9 +27,9 @@ public class AdditionalTest extends TestCase {
 		kvClient.disconnect();
         kvClient2.disconnect();
 	}
-	
+
 	@Test
-	public void testsynchronization() {
+	public void testConsistency() {
 		String key = "foo1";
 		KVMessage response = null;
 		Exception ex = null;
@@ -113,7 +113,7 @@ public class AdditionalTest extends TestCase {
 
 		assertTrue(ex == null && response.getValue().equals("2"));
 	}
-    
+
 	@Test
 	public void testDoubleDelete() {
 		String key = "foo111";
@@ -139,20 +139,20 @@ public class AdditionalTest extends TestCase {
 
 		try {
 			response = kvClient.put(key, "3");
-            response = kvClient.get(key);
-            assertTrue(response.getStatus() == StatusType.GET_SUCCESS);
-            response = kvClient.put(key, "null");
-            assertTrue(response.getStatus() == StatusType.DELETE_SUCCESS);
-            response = kvClient.get(key);
-            assertTrue(response.getStatus() == StatusType.GET_ERROR);
+		    response = kvClient.get(key);
+		    assertTrue(response.getStatus() == StatusType.GET_SUCCESS);
+		    response = kvClient.put(key, "null");
+		    assertTrue(response.getStatus() == StatusType.DELETE_SUCCESS);
+		    response = kvClient.get(key);
+		    assertTrue(response.getStatus() == StatusType.GET_ERROR);
 		} catch (Exception e) {
 			ex = e;
             System.out.println(ex);
 		}
 
-		assertTrue(ex == null && response.getStatus() == StatusType.DELETE_ERROR);
+		assertTrue(ex == null);
 	}
-   
+
 	@Test
 	public void testSpaces() {
 		String key = "foo111";
@@ -175,9 +175,10 @@ public class AdditionalTest extends TestCase {
 		KVMessage response = null;
 		Exception ex = null;
         long elapsed = 0;
+
 		try {
             long start = System.currentTimeMillis();
-            
+
             for (int i = 0 ; i < 100; i++)
 			    response = kvClient.put(Integer.toString(i), "random");
 

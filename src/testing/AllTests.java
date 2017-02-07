@@ -14,20 +14,23 @@ public class AllTests {
 
 	static {
 		try {
+			Process p = Runtime.getRuntime().exec("rm -rf ./files/");
+			p.destroy();
 			new LogSetup("logs/testing/test.log", Level.ERROR);
 			new KVServer(50000, 10, "FIFO");
 		} catch (IOException e) {
+			System.out.println("Deletion error?");
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	public static Test suite() {
 		TestSuite clientSuite = new TestSuite("Basic Storage ServerTest-Suite");
 		clientSuite.addTestSuite(ConnectionTest.class);
-		clientSuite.addTestSuite(InteractionTest.class); 
-		clientSuite.addTestSuite(AdditionalTest.class); 
+		clientSuite.addTestSuite(InteractionTest.class);
+		clientSuite.addTestSuite(AdditionalTest.class);
 		return clientSuite;
 	}
-	
+
 }

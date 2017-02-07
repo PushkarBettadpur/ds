@@ -61,7 +61,7 @@ public class ClientConnection implements Runnable {
 					TextMessage latestMsg = receiveMessage();
 
 					TextMessage response = new TextMessage(store.handleMessage(latestMsg.getMsg().trim()));
-
+					/*
 					Runtime.getRuntime().addShutdownHook(new Thread() {
 				      public void run() {
 						//System.out.println("Running Shutdown Hook");
@@ -76,7 +76,7 @@ public class ClientConnection implements Runnable {
 						}
 				      }
 				    });
-
+					*/
 
 					sendMessage(response);
 
