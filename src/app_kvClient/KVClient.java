@@ -96,8 +96,8 @@ public class KVClient {
 
 		}
 		else if(tokens[0].equals("put")) {
-			if(kvClient != null && kvClient.getClient() != null
-				&& kvClient.getClient().isRunning()) {
+			if(kvClient != null && kvClient.getClient() != null &&
+			 	kvClient.getClient().isRunning()) {
 				try {
 					if(tokens.length == 3) {
 
@@ -176,7 +176,8 @@ public class KVClient {
 		}
 		else if(tokens[0].equals("get"))
 		{
-			if(kvClient != null && kvClient.getClient().isRunning()){
+			if(kvClient != null && kvClient.getClient() != null &&
+				kvClient.getClient().isRunning()){
 
 				try {
 					if(tokens.length == 2)

@@ -139,12 +139,12 @@ public class AdditionalTest extends TestCase {
 
 		try {
 			response = kvClient.put(key, "3");
-		    response = kvClient.get(key);
-		    assertTrue(response.getStatus() == StatusType.GET_SUCCESS);
-		    response = kvClient.put(key, "null");
-		    assertTrue(response.getStatus() == StatusType.DELETE_SUCCESS);
-		    response = kvClient.get(key);
-		    assertTrue(response.getStatus() == StatusType.GET_ERROR);
+            response = kvClient.get(key);
+            assertTrue(response.getStatus() == StatusType.GET_SUCCESS);
+            response = kvClient.put(key, "null");
+            assertTrue(response.getStatus() == StatusType.DELETE_SUCCESS);
+            response = kvClient.get(key);
+            assertTrue(response.getStatus() == StatusType.GET_ERROR);
 		} catch (Exception e) {
 			ex = e;
             System.out.println(ex);
@@ -175,7 +175,6 @@ public class AdditionalTest extends TestCase {
 		KVMessage response = null;
 		Exception ex = null;
         long elapsed = 0;
-
 		try {
             long start = System.currentTimeMillis();
 
@@ -212,6 +211,26 @@ public class AdditionalTest extends TestCase {
 
 		assertTrue(ex == null && elapsed < 5000);
 	}
+
+
+	@Test
+	public void testValueswithCommas() {
+		String key = "foo";
+		KVMessage response = null;
+		Exception ex = null;
+
+		try {
+			response = kvClient.put(key, ",123,456,789,");
+            		response = kvClient.get(key);
+		} catch (Exception e) {
+			ex = e;
+            System.out.println(ex);
+		}
+
+		assertTrue(ex == null && response.getValue().equals(",123,456,789,"));
+	}
+
+
 
 
 }

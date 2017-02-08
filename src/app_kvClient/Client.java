@@ -39,6 +39,7 @@ public class Client extends Thread {
 	 * Initializes and starts the client connection.
 	 * Loops until the connection is closed or aborted by the client.
 	 */
+
 	public void run() {
 		try {
 			output = clientSocket.getOutputStream();
@@ -144,6 +145,8 @@ public class Client extends Thread {
 		byte read = (byte) input.read();
 		boolean reading = true;
 
+		long startTime = System.currentTimeMillis();
+
 		while(read != 13 && reading) {/* carriage return */
 			/* if buffer filled, copy to msg array */
 			if(index == BUFFER_SIZE) {
@@ -175,6 +178,11 @@ public class Client extends Thread {
 
 			/* read next char from stream */
 			read = (byte) input.read();
+
+			if ((System.currentTimeMillis() - startTime) > 5000)
+			{
+				return new TextMessage("Server Timeout");
+			}
 		}
 
 		//System.out.println("Finished reading");

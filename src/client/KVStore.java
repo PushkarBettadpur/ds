@@ -6,6 +6,7 @@ import common.messages.KVMessage.StatusType;
 import common.messages.Message;
 import app_kvClient.TextMessage;
 import java.net.UnknownHostException;
+import java.net.SocketTimeoutException;
 
 import app_kvClient.Client;
 import app_kvClient.ClientSocketListener;
@@ -98,6 +99,9 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 	private TextMessage receiveMessage() {
 		try {
 			return client.receiveMessage();
+		} catch (SocketTimeoutException e) {
+			System.out.println("Timeout: Server took too long to respond!");
+			disconnect();
 		} catch (IOException e) {
 			printError("Unable to receive message!");
 			disconnect();
@@ -124,12 +128,17 @@ public class KVStore implements KVCommInterface, ClientSocketListener {
 				}
 				System.out.println(">");
 			} catch (Exception e) {
-				System.out.println(msg.getMsg());
+
+				if (msg.getMsg().trim().equals("Server Timeout")) {
+					System.out.println("Timeout: Server took too long to respond!");
+					disconnect();
+				}
+				else {
+					System.out.println(msg.getMsg());
+				}
 			}
 
-			if (msg.getMsg().trim().equals("Server aborted")) {
-				disconnect();
-			}
+
 	}
 
 	@Override
