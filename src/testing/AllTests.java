@@ -16,10 +16,10 @@ public class AllTests {
 		try {
 			Process p = Runtime.getRuntime().exec("rm -rf ./files/");
 			p.destroy();
+			
 			new LogSetup("logs/testing/test.log", Level.ERROR);
 			new KVServer(50000, 10, "FIFO");
 		} catch (IOException e) {
-			System.out.println("Deletion error?");
 			e.printStackTrace();
 		}
 	}
