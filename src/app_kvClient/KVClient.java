@@ -50,7 +50,8 @@ public class KVClient {
 
 		if(tokens[0].equals("quit")) {
 			stop = true;
-			kvClient.disconnect();
+            if (kvClient != null)
+    			kvClient.disconnect();
 			System.out.println(PROMPT + "Application exit!");
 
 		} else if (tokens[0].equals("connect")){
