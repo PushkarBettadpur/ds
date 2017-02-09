@@ -70,9 +70,9 @@ public class Storage {
 		this.lfu_kf = null;
 		this.lru_fC = null;
 
-		if (this.cacheStrategy == "LRU")
+		if (this.cacheStrategy.equals("LRU"))
 			lru_fC = new Cache(this.cacheSize, true);
-		else if (this.cacheStrategy == "FIFO")
+		else if (this.cacheStrategy.equals("FIFO"))
 			lru_fC = new Cache(this.cacheSize, false);
 		else {
 			lfu_kf = new HashMap<String, Integer>();
@@ -94,6 +94,7 @@ public class Storage {
             }
             catch (Exception e) {
                 System.out.println("Exception in GET operation" + e);
+                e.printStackTrace();
                 return (new Message(key, "null", Message.StatusType.GET_ERROR)).toString();
             }
         }
@@ -130,8 +131,10 @@ public class Storage {
     public void printCache()
     {
     	System.out.println(this.cacheStrategy);
-    	if (this.cacheStrategy == "LRU" || this.cacheStrategy == "FIFO")
+    	if (this.cacheStrategy.equals("LRU") || this.cacheStrategy.equals("FIFO"))
 	    {
+            if (lru_fC.size() == 0)
+                return;
 		    Set set = lru_fC.entrySet();
 		    Iterator iterator = set.iterator();
 		    while(iterator.hasNext()) {
@@ -152,7 +155,7 @@ public class Storage {
 
     private void removeFromCache(String key)
     {
-	    if (this.cacheStrategy == "LRU" || this.cacheStrategy == "FIFO")
+	    if (this.cacheStrategy.equals("LRU") || this.cacheStrategy.equals("FIFO"))
 		    lru_fC.remove(key);
 	    else
         {
@@ -164,9 +167,9 @@ public class Storage {
     // Does the key exist in the cache?
     private boolean findInCache(String key)
     {
-	    if (this.cacheStrategy == "LRU" || this.cacheStrategy == "FIFO")
+	    if (this.cacheStrategy.equals("LRU") || this.cacheStrategy.equals("FIFO"))
 		    return lru_fC.containsKey(key);
-	    else if (this.cacheStrategy == "LFU")
+	    else if (this.cacheStrategy.equals("LFU"))
 		    return lfu_kv.containsKey(key);
 	    return false;
     }
@@ -175,7 +178,7 @@ public class Storage {
     // is in the cache. (call findInCache before)
     private String getValFromCache(String key)
     {
-	    if (this.cacheStrategy == "LRU" || this.cacheStrategy == "FIFO")
+	    if (this.cacheStrategy.equals("LRU") || this.cacheStrategy.equals("FIFO"))
 		    return lru_fC.get(key);
 	    else
         {
@@ -189,7 +192,7 @@ public class Storage {
     {
         // I believe the HashLinkedMap already can remove the LRU
         // or FIFO element if it's exceeded it's capacity
-	    if (this.cacheStrategy == "LRU" || this.cacheStrategy == "FIFO")
+	    if (this.cacheStrategy.equals("LRU") || this.cacheStrategy.equals("FIFO"))
         {
 		    lru_fC.put(key, value);
             return;
@@ -303,6 +306,7 @@ public class Storage {
     // the value. This is done for fast I/O?
     public Message getHelper(String key) throws Exception
     {
+        printCache();
 	    String filename = "./files/"+key;
 
         String lockFileName = filename+".lock";
@@ -371,7 +375,6 @@ public class Storage {
 		    }
 
 		    insertIntoCache(key, value);
-            System.out.println("about to delete");
             lockFile.delete();//lock.release();
 		    return new Message(key, value, Message.StatusType.GET_SUCCESS);
 	    }
