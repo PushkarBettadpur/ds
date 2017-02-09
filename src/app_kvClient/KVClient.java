@@ -200,10 +200,17 @@ public class KVClient {
 				printError("Please connect to a server!");
 			}
 		}
-		else if(tokens[0].equals("disconnect")) {
-			kvClient.disconnect();
 
-		} else if(tokens[0].equals("logLevel")) {
+		else if(tokens[0].equals("disconnect")) {
+            if (kvClient != null)
+    			kvClient.disconnect();
+            else
+                printError("Please connect to a server!");
+            kvClient = null;
+
+		} 
+        
+        else if(tokens[0].equals("logLevel")) {
 			if(tokens.length == 2) {
 				String level = setLevel(tokens[1]);
 				if(level.equals(LogSetup.UNKNOWN_LEVEL)) {
