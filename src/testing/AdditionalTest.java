@@ -83,7 +83,7 @@ public class AdditionalTest extends TestCase {
 
 	@Test
 	public void testIncorrect() {
-		String key = "foo111";
+		String key = "ramdomKeyDoesntexist";
 		KVMessage response = null;
 		Exception ex = null;
 

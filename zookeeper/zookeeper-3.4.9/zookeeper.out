@@ -1,0 +1,32 @@
+2017-02-13 10:49:25,321 [myid:] - INFO  [main:QuorumPeerConfig@124] - Reading configuration from: /homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../conf/zoo.cfg
+2017-02-13 10:49:25,324 [myid:] - INFO  [main:DatadirCleanupManager@78] - autopurge.snapRetainCount set to 3
+2017-02-13 10:49:25,324 [myid:] - INFO  [main:DatadirCleanupManager@79] - autopurge.purgeInterval set to 0
+2017-02-13 10:49:25,324 [myid:] - INFO  [main:DatadirCleanupManager@101] - Purge task is not scheduled.
+2017-02-13 10:49:25,325 [myid:] - WARN  [main:QuorumPeerMain@113] - Either no config or no quorum defined in config, running  in standalone mode
+2017-02-13 10:49:25,332 [myid:] - INFO  [main:QuorumPeerConfig@124] - Reading configuration from: /homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../conf/zoo.cfg
+2017-02-13 10:49:25,333 [myid:] - INFO  [main:ZooKeeperServerMain@96] - Starting server
+2017-02-13 10:49:25,341 [myid:] - INFO  [main:Environment@100] - Server environment:zookeeper.version=3.4.9-1757313, built on 08/23/2016 06:50 GMT
+2017-02-13 10:49:25,341 [myid:] - INFO  [main:Environment@100] - Server environment:host.name=ug169.eecg.toronto.edu
+2017-02-13 10:49:25,341 [myid:] - INFO  [main:Environment@100] - Server environment:java.version=1.7.0_121
+2017-02-13 10:49:25,341 [myid:] - INFO  [main:Environment@100] - Server environment:java.vendor=Oracle Corporation
+2017-02-13 10:49:25,341 [myid:] - INFO  [main:Environment@100] - Server environment:java.home=/usr/lib/jvm/java-7-openjdk-amd64/jre
+2017-02-13 10:49:25,341 [myid:] - INFO  [main:Environment@100] - Server environment:java.class.path=/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../build/classes:/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../build/lib/*.jar:/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../lib/slf4j-log4j12-1.6.1.jar:/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../lib/slf4j-api-1.6.1.jar:/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../lib/netty-3.10.5.Final.jar:/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../lib/log4j-1.2.16.jar:/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../lib/jline-0.9.94.jar:/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../zookeeper-3.4.9.jar:/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../src/java/lib/*.jar:/homes/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9/bin/../conf:
+2017-02-13 10:49:25,341 [myid:] - INFO  [main:Environment@100] - Server environment:java.library.path=/cad2/ece451/pkg/lib:/lib:/CMC/lib/x86_limited/amd64:/usr/lib/x86_64-linux-gnu:/lib:/CMC/lib/x86_limited/amd64:/usr/lib/x86_64-linux-gnu:/CMC/tools/cadence/IC.5141.USR5.linux/tools/lib:/CMC/tools/cadence/ASSURA.linux/tools/assura/lib:/CMC/lib/x86_limited:/CMC/lib/usr_lib_i386:/CMC/lib/x86_limited:/CMC/lib/usr_lib_i386:/CMC/lib/x86_limited/amd64:/CMC/lib/x86_limited:/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib
+2017-02-13 10:49:25,341 [myid:] - INFO  [main:Environment@100] - Server environment:java.io.tmpdir=/tmp
+2017-02-13 10:49:25,341 [myid:] - INFO  [main:Environment@100] - Server environment:java.compiler=<NA>
+2017-02-13 10:49:25,343 [myid:] - INFO  [main:Environment@100] - Server environment:os.name=Linux
+2017-02-13 10:49:25,343 [myid:] - INFO  [main:Environment@100] - Server environment:os.arch=amd64
+2017-02-13 10:49:25,343 [myid:] - INFO  [main:Environment@100] - Server environment:os.version=3.16.0-4-amd64
+2017-02-13 10:49:25,343 [myid:] - INFO  [main:Environment@100] - Server environment:user.name=bettadpu
+2017-02-13 10:49:25,343 [myid:] - INFO  [main:Environment@100] - Server environment:user.home=/homes/b/bettadpu
+2017-02-13 10:49:25,343 [myid:] - INFO  [main:Environment@100] - Server environment:user.dir=/nfs/ug/homes-1/b/bettadpu/419/2/oldcode/zookeeper/zookeeper-3.4.9
+2017-02-13 10:49:25,348 [myid:] - INFO  [main:ZooKeeperServer@815] - tickTime set to 2000
+2017-02-13 10:49:25,348 [myid:] - INFO  [main:ZooKeeperServer@824] - minSessionTimeout set to -1
+2017-02-13 10:49:25,348 [myid:] - INFO  [main:ZooKeeperServer@833] - maxSessionTimeout set to -1
+2017-02-13 10:49:25,355 [myid:] - INFO  [main:NIOServerCnxnFactory@89] - binding to port 0.0.0.0/0.0.0.0:2181
+2017-02-13 10:49:29,358 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@192] - Accepted socket connection from /127.0.0.1:44151
+2017-02-13 10:49:29,362 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@928] - Client attempting to establish new session at /127.0.0.1:44151
+2017-02-13 10:49:29,363 [myid:] - INFO  [SyncThread:0:FileTxnLog@203] - Creating new log file: log.4
+2017-02-13 10:49:29,388 [myid:] - INFO  [SyncThread:0:ZooKeeperServer@673] - Established session 0x15a382a10fd0000 with negotiated timeout 30000 for client /127.0.0.1:44151
+2017-02-13 11:01:24,939 [myid:] - INFO  [ProcessThread(sid:0 cport:2181)::PrepRequestProcessor@487] - Processed session termination for sessionid: 0x15a382a10fd0000
+2017-02-13 11:01:24,945 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1008] - Closed socket connection for client /127.0.0.1:44151 which had sessionid 0x15a382a10fd0000

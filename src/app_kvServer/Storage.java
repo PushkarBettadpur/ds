@@ -27,6 +27,13 @@ import java.util.Iterator;
 import java.util.Collections;
 import java.util.Map.Entry;
 
+// MD5 imports
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+
 // The LRU + FIFO Cache. Apparently need to override
 // the removeEldestEntry.
 // https://discuss.leetcode.com/topic/54214/lfu-cache/14
@@ -48,6 +55,8 @@ class Cache extends LinkedHashMap<String, String> {
 
 }
 public class Storage {
+
+    private static Logger logger = Logger.getRootLogger();
 
 	private String cacheStrategy;
 	private int cacheSize;
@@ -81,13 +90,26 @@ public class Storage {
 	}
 
     public String handleMessage(String latestMsg) {
+        String status = "";
+        try {
+            status = KVServer.getZNodeData(KVServer.zNodePath, false);
+            if(status.equals("SERVER_STOPPED"))
+                return (new Message("null", "null", Message.StatusType.SERVER_STOPPED)).toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         String[] tokens = latestMsg.split(" ", 3);
         if(tokens[0].equals((Message.StatusType.GET).toString()) && tokens.length == 3) {
 
             System.out.println("GET_REQUEST<" + tokens[1] + ">");
             String key = tokens[1];
-
+            
+            if(!isKeyInRange(key, KVServer.getBeginRange(), KVServer.getEndRange())) {
+                // Send the metadata
+                return (new Message(key, KVServer.metadata, Message.StatusType.SERVER_NOT_RESPONSIBLE)).toString();
+            }
+                
             try {
                 Message result = getHelper(key);
                 return result.toString();
@@ -99,9 +121,19 @@ public class Storage {
             }
         }
         else if(tokens[0].equals((Message.StatusType.PUT).toString()) && tokens.length == 3) {
+
+            // Doesn't handle PUT requests in WRITE_LOCK status
+            if(status.equals("SERVER_WRITE_LOCK_PRODUCER"))
+                return (new Message("null", "null", Message.StatusType.SERVER_WRITE_LOCK)).toString();
+
             System.out.println("PUT_REQUEST<" + tokens[1] + "," + tokens[2] + ">");
             String key = tokens[1];
             String value = tokens[2];
+
+            if(!isKeyInRange(key, KVServer.getBeginRange(), KVServer.getEndRange())) {
+                // Send the metadata
+                return (new Message(key, KVServer.metadata, Message.StatusType.SERVER_NOT_RESPONSIBLE)).toString();
+            }
 
             try {
                 Message result = putHelper(key, value);
@@ -242,7 +274,7 @@ public class Storage {
     // The strategy is to update the file AND the cache immediately.
     public Message putHelper(String key, String value) throws Exception
     {
-	    String filename = "./files/"+key;
+	    String filename = "/nfs/ug/homes-1/b/bettadpu/419/2/oldcode/files"+ KVServer.zNodePath + "/" + key;
 
         String lockFileName = filename+".lock";
         File lockFile = new File(lockFileName);
@@ -307,7 +339,7 @@ public class Storage {
     public Message getHelper(String key) throws Exception
     {
         printCache();
-	    String filename = "./files/"+key;
+	    String filename = "/nfs/ug/homes-1/b/bettadpu/419/2/oldcode/files"+ KVServer.zNodePath + "/" + key;
 
         String lockFileName = filename+".lock";
         File lockFile = new File(lockFileName);
@@ -341,8 +373,6 @@ public class Storage {
 
 	    try
         {
-		    fr = new FileReader(filename);
-		    br = new BufferedReader(fr);
 		    br = new BufferedReader(new FileReader(filename));
             // There's only 1 line? the value that is.
 		    value = br.readLine();
@@ -379,4 +409,52 @@ public class Storage {
 		    return new Message(key, value, Message.StatusType.GET_SUCCESS);
 	    }
     }
+
+    public String convert2MD5(String input)
+    {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(input.getBytes());
+            BigInteger number = new BigInteger(1, messageDigest);
+            String hashtext = number.toString(16);
+            // Now we need to zero pad it if you actually want the full 32 chars.
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean isKeyInRange(String key, String beginRange, String endRange)
+    {
+        String hashedKey = convert2MD5(key);
+        System.out.println("Hashed Key = " + hashedKey);
+        
+        logger.info("Hashed Key = " + hashedKey);
+        logger.info("BeginRange = " + beginRange);
+        logger.info("EndRange = " + endRange);
+
+        // First server
+        if(beginRange.compareTo(endRange) > 0) {
+            // Key is between beginRange and FFFF
+            if(hashedKey.compareTo(beginRange) > 0 &&
+               hashedKey.compareTo(endRange) > 0)
+                    return true;
+            // Key is between 0 and endRange
+            else if(hashedKey.compareTo(beginRange) < 0 &&
+               hashedKey.compareTo(endRange) < 0)
+                    return true;
+            return false;
+        }
+        else if(beginRange.compareTo(endRange) == 0)
+            return true;
+        else if(hashedKey.compareTo(beginRange) > 0 &&
+           hashedKey.compareTo(endRange) < 0)
+            return true;
+        else
+            return false;
+    } 
+
 }

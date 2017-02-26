@@ -18,7 +18,7 @@ public class AllTests {
 			p.destroy();
 			
 			new LogSetup("logs/testing/test.log", Level.ERROR);
-			new KVServer(50000, 10, "FIFO");
+			new KVServer(50000, 10, "FIFO", "localhost");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
